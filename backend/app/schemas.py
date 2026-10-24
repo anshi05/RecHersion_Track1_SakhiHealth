@@ -55,6 +55,7 @@ class AgentResult(BaseModel):
     cards: list[Card] = []
     disclaimer_key: Literal["not_a_diagnosis", "emergency"] = "not_a_diagnosis"
     text_source: Literal["llm", "template"] = "template"
+    stats: dict[str, Any] = {}  # computed facts (cycle stats, correlations, deltas) for dashboards
 
 
 class ApplicabilityResult(BaseModel):
@@ -178,6 +179,29 @@ class CycleEvent(BaseModel):
     end_date: date | None = None
     length_days: int | None = None
     flow_summary: str | None = None
+
+
+class DayPoint(BaseModel):
+    date: date
+    flow: Flow = "none"
+    pain_level: int | None = None
+    mood: int | None = None
+    energy: int | None = None
+    sleep_hours: float | None = None
+    stress: int | None = None
+    cycle_day: int | None = None
+
+
+class Marker(BaseModel):
+    date: date
+    kind: Literal["period_start", "measurement"]
+    label: str
+
+
+class TimelineResponse(BaseModel):
+    cycles: list[CycleEvent]
+    days: list[DayPoint]
+    markers: list[Marker]
 
 
 class MeasurementIn(BaseModel):

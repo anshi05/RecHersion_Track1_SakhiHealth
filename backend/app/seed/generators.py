@@ -26,8 +26,8 @@ def _m(anchor: date, ago: int, typ: str, v1: float, v2: float | None, unit: str)
 
 def _priya(rng: random.Random, spec: PersonaSpec, anchor: date) -> tuple[list[LogRow], list[MeasRow]]:
     n = spec.days
-    # Period starts at day indexes 5, 53, 102, 150, 199-... -> cycle lengths 48, 49, 48, 49.
-    starts = [5, 53, 102, 150, 193]
+    # Period starts at day indexes 5, 53, 102, 150, 199-... -> cycle lengths 48, 49, 48, 48.
+    starts = [5, 53, 102, 150, 198]
     period_day: dict[int, int] = {}
     for s in starts:
         for k in range(5):

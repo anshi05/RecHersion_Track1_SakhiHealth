@@ -126,6 +126,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Timeline */
+        get: operations["timeline_api_timeline_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/agents/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Agent Result
+         * @description Computed on demand until P5 stores orchestrator runs.
+         */
+        get: operations["agent_result_api_agents__name__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -190,6 +227,13 @@ export interface components {
              * @enum {string}
              */
             text_source: "llm" | "template";
+            /**
+             * Stats
+             * @default {}
+             */
+            stats: {
+                [key: string]: unknown;
+            };
         };
         /** AnalyzeResponse */
         AnalyzeResponse: {
@@ -233,6 +277,24 @@ export interface components {
             meta?: {
                 [key: string]: unknown;
             } | null;
+        };
+        /** CycleEvent */
+        CycleEvent: {
+            /** Id */
+            id: number;
+            /** User Id */
+            user_id: number;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            /** End Date */
+            end_date?: string | null;
+            /** Length Days */
+            length_days?: number | null;
+            /** Flow Summary */
+            flow_summary?: string | null;
         };
         /** DailyLog */
         DailyLog: {
@@ -394,6 +456,32 @@ export interface components {
             /** Voice Transcript */
             voice_transcript?: string | null;
         };
+        /** DayPoint */
+        DayPoint: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /**
+             * Flow
+             * @default none
+             * @enum {string}
+             */
+            flow: "none" | "spotting" | "light" | "medium" | "heavy";
+            /** Pain Level */
+            pain_level?: number | null;
+            /** Mood */
+            mood?: number | null;
+            /** Energy */
+            energy?: number | null;
+            /** Sleep Hours */
+            sleep_hours?: number | null;
+            /** Stress */
+            stress?: number | null;
+            /** Cycle Day */
+            cycle_day?: number | null;
+        };
         /** Evidence */
         Evidence: {
             /** Rule */
@@ -412,6 +500,21 @@ export interface components {
         LogResponse: {
             log: components["schemas"]["DailyLog"];
             analysis?: components["schemas"]["AnalyzeResponse"] | null;
+        };
+        /** Marker */
+        Marker: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "period_start" | "measurement";
+            /** Label */
+            label: string;
         };
         /** Measurement */
         Measurement: {
@@ -638,6 +741,15 @@ export interface components {
         SwitchResponse: {
             profile: components["schemas"]["Profile"];
             analysis?: components["schemas"]["AnalyzeResponse"] | null;
+        };
+        /** TimelineResponse */
+        TimelineResponse: {
+            /** Cycles */
+            cycles: components["schemas"]["CycleEvent"][];
+            /** Days */
+            days: components["schemas"]["DayPoint"][];
+            /** Markers */
+            markers: components["schemas"]["Marker"][];
         };
         /** ValidationError */
         ValidationError: {
@@ -957,6 +1069,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeasurementResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    timeline_api_timeline_get: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                uid?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimelineResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    agent_result_api_agents__name__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: {
+                uid?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentResult"];
                 };
             };
             /** @description Validation Error */

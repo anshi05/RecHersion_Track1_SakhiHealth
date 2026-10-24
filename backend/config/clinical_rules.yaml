@@ -106,6 +106,7 @@ stats:
   min_corr: 0.3          # report only |r| >= this
   min_pairs: 14          # and n >= this
   delta_days: 14         # last N days vs previous N days
+  corr_weight: 0.2       # evidence weight of a reported correlation
   min_delta: 0.3         # smallest change worth mentioning (scale points)
   phases:                # cycle-day boundaries (inclusive end); luteal runs to cycle end
     menstrual: 5

@@ -28,7 +28,7 @@ Next.js 16 + React 19 + TS + Tailwind 4 + shadcn/ui (base-nova) + motion + Recha
 - Commit per phase: `feat(p<N>): <phase name>`; never commit `.env`
 
 ## Current phase
-**Phase 2: Seed + persona switch** done. Next: Phase 3.
+**Phase 4: Health Story + viz** done. Next: Phase 5.
 
 ## Token rules
 - Never re-read `docs/brief.md`; use this file plus the relevant guide phase row and §5.1 note.

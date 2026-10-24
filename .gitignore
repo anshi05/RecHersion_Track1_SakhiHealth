@@ -1,9 +1,40 @@
+# Dependencies
 node_modules/
 .venv/
-.next/
+venv/
+
+# Secrets (keep .env.example)
 .env
-*.db
-reports/
+.env.*
+!.env.example
+
+# Build / cache
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+next-env.d.ts
 __pycache__/
+*.py[cod]
 .pytest_cache/
 .ruff_cache/
+.mypy_cache/
+coverage/
+
+# Local data and generated output
+*.db
+*.sqlite
+*.sqlite3
+reports/
+*.log
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Claude Code local settings
+.claude/settings.local.json

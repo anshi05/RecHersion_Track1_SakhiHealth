@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlmodel import SQLModel
 
-from app.api import logs, measurements, profile
+from app.api import logs, measurements, personas, profile
 from app.config import get_settings
 from app.db import engine
 from app.errors import AppError
@@ -43,5 +43,5 @@ def health() -> dict[str, str]:
     return {"status": "ok", "llm": "live" if get_settings().llm_live else "fallback"}
 
 
-for _r in (profile.router, logs.router, measurements.router):
+for _r in (personas.router, profile.router, logs.router, measurements.router):
     app.include_router(_r)

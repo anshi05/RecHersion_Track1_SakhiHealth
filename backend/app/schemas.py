@@ -212,3 +212,24 @@ class UserContext:
     cycles: list[CycleEvent]
     measurements: list[Measurement]
     gestational_week: int | None = None
+
+
+class Persona(BaseModel):
+    key: str
+    name: str
+    age: int
+    life_stage: LifeStage
+    tagline: str
+
+
+class SwitchRequest(BaseModel):
+    persona_key: str
+
+
+class SwitchResponse(BaseModel):
+    profile: Profile
+    analysis: AnalyzeResponse | None = None  # None until Phase 5 orchestrator
+
+
+class SessionResponse(BaseModel):
+    profile: Profile

@@ -10,7 +10,6 @@ Next.js 16 + React 19 + TS + Tailwind 4 + shadcn/ui (base-nova) + motion + Recha
 - `backend/app/{api,agents,services,models,seed}`, `backend/config/clinical_rules.yaml`, `backend/tests`
 - `docs/guide.md`: build guide (phases §5, types §4, API §3, design §8)
 - `docs/brief.md`: original brief (do not re-read)
-- `.claude/agents/`: phase subagents
 
 ## Commands
 - BE: `cd backend && source .venv/Scripts/activate && uvicorn app.main:app --reload --port 8000`
@@ -34,9 +33,9 @@ Next.js 16 + React 19 + TS + Tailwind 4 + shadcn/ui (base-nova) + motion + Recha
 ## Token rules
 - Never re-read `docs/brief.md`; use this file plus the relevant guide phase row and §5.1 note.
 - Use Grep/Glob and line ranges, not whole-file reads.
-- Delegate each phase to its subagent (guide §5 Owner); subagents return summaries only.
+- Build each phase directly (no custom subagents); keep replies short.
 - Write each file once, complete. No exploratory rewrites, unrequested refactors or long replies.
 - Batch independent tool calls. Run tests quietly (failures only).
-- After each phase: acceptance check → `qa-reviewer` → commit → `docs-scribe` updates pointer → tell user to `/clear`.
+- After each phase: acceptance check (tests, lint, tsc, build) → commit → tick guide §5 + update the Current phase pointer → tell user to `/clear`.
 - Plan mode before any phase with budget L (P4, P8, P12).
 - Prefer well-known libraries over custom code.

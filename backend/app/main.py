@@ -1,18 +1,26 @@
-"""FastAPI app: CORS, error handler, /api/health."""
+"""FastAPI app: CORS, error handler, routers, /api/health."""
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from sqlmodel import SQLModel
 
+from app.api import logs, measurements, profile
 from app.config import get_settings
+from app.db import engine
+from app.errors import AppError
+from app.models import tables  # noqa: F401  (registers tables)
 
 
-class AppError(Exception):
-    def __init__(self, code: str, message: str, status: int = 400) -> None:
-        super().__init__(message)
-        self.code, self.message, self.status = code, message, status
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    SQLModel.metadata.create_all(engine)
+    yield
 
 
-app = FastAPI(title="Sakhi Health")
+app = FastAPI(title="Sakhi Health", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=get_settings().cors_origins,
@@ -33,3 +41,7 @@ async def app_error_handler(_: Request, exc: AppError) -> JSONResponse:
 @app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok", "llm": "live" if get_settings().llm_live else "fallback"}
+
+
+for _r in (profile.router, logs.router, measurements.router):
+    app.include_router(_r)

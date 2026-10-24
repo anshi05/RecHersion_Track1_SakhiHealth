@@ -1,0 +1,120 @@
+# Clinical thresholds for Sakhi Health. Awareness only, never diagnostic.
+# Every rule needs `source:`. `# TODO(clinician)` marks values a clinician must confirm before real use.
+rules:
+  cycle_long:
+    weight: 0.8
+    min_cycles: 2        # completed cycles needed
+    max_normal_days: 35  # TODO(clinician): confirm cut-off for Indian adolescents/young adults
+    min_count: 2         # cycles longer than the cut-off
+    source: "ACOG Committee Opinion 651 (2015): normal cycle 21-35 days"
+  cycle_variability:
+    weight: 0.5
+    min_cycles: 2
+    max_range_days: 9    # longest minus shortest cycle
+    source: "FIGO 2018 AUB classification: variation > 7-9 days is irregular"
+  hirsutism_persistent:
+    weight: 0.7
+    window_days: 90
+    min_days_logged: 14
+    min_mean: 1.5        # self-rated 0-3; TODO(clinician): self-report is not an mFG score
+    source: "Rotterdam 2003 / International PCOS guideline 2018: clinical hyperandrogenism"
+  acne_persistent:
+    weight: 0.4
+    window_days: 90
+    min_days_logged: 14
+    min_mean: 1.5
+    source: "International PCOS guideline 2018 (Teede et al.): acne as hyperandrogenism sign"
+  pco_ultrasound:
+    weight: 0.6
+    source: "Rotterdam 2003 criterion 3: polycystic ovarian morphology on ultrasound"
+  family_history_pcos:
+    weight: 0.3
+    keyword: pcos
+    source: "International PCOS guideline 2018 (Teede et al.): family history as a risk factor"
+  bmi_elevated:
+    weight: 0.2
+    min_bmi: 23.0        # Asian-Indian cut-off
+    source: "WHO Expert Consultation, Lancet 2004: BMI >= 23 increased risk in Asian populations"
+  severe_period_pain:
+    weight: 0.6
+    window_days: 90
+    min_pain: 7
+    min_days: 3
+    source: "ESHRE endometriosis guideline 2022: severe pain on a 0-10 scale"
+  pain_interferes:
+    weight: 0.5
+    window_days: 90
+    min_days: 3
+    source: "ESHRE endometriosis guideline 2022: pain interfering with daily activity"
+  dyspareunia_or_bowel_urinary:
+    weight: 0.5
+    window_days: 90
+    min_days: 2
+    source: "ESHRE endometriosis guideline 2022: deep dyspareunia, cyclical bowel/urinary symptoms"
+  vasomotor_frequent:
+    weight: 0.7
+    window_days: 30
+    min_days_logged: 7
+    min_mean_per_day: 2.0  # TODO(clinician): confirm frequency band
+    source: "NAMS 2022 position statement on menopause hormone therapy: vasomotor symptoms"
+  night_sweats_frequent:
+    weight: 0.4
+    window_days: 30
+    min_days_logged: 7
+    min_share: 0.3
+    source: "Menopause Rating Scale (Heinemann 2004): sweating/flushes item"
+  sleep_short:
+    weight: 0.3
+    window_days: 30
+    min_days_logged: 7
+    max_mean_hours: 6.0
+    source: "Watson et al. 2015 AASM/SRS consensus: under 6 h not recommended for adults"
+  perimenopause_age_window:
+    weight: 0.3
+    min_age: 40
+    max_age: 55
+    source: "STRAW+10 (Harlow 2012): menopausal transition typically mid-40s to early 50s"
+  bp_alert:
+    weight: 0.7
+    systolic: 140
+    diastolic: 90
+    source: "ACOG Practice Bulletin 222 (2020): BP >= 140/90"
+  bp_urgent:
+    weight: 1.0
+    systolic: 160
+    diastolic: 110
+    source: "ACOG Practice Bulletin 222 (2020): severe-range BP >= 160/110"
+  anemia_low_hb:
+    weight: 0.5
+    max_hb: 11.0         # g/dL, pregnancy
+    source: "WHO 2011: haemoglobin < 11 g/dL in pregnancy"
+  low_fetal_movement:
+    weight: 0.8
+    recent_counts: 3
+    min_kicks_per_2h: 10
+    source: "RCOG Green-top 57 / count-to-ten: fewer than 10 movements in 2 hours"
+  swelling_with_headache:
+    weight: 0.7
+    window_days: 7
+    min_level: 2
+    min_days: 2
+    source: "ACOG Practice Bulletin 222 (2020): headache with swelling as pre-eclampsia warning signs"
+
+# Health Story statistics (services/stats.py)
+stats:
+  window_days: 90
+  min_corr: 0.3          # report only |r| >= this
+  min_pairs: 14          # and n >= this
+  delta_days: 14         # last N days vs previous N days
+  min_delta: 0.3         # smallest change worth mentioning (scale points)
+  phases:                # cycle-day boundaries (inclusive end); luteal runs to cycle end
+    menstrual: 5
+    follicular: 13
+    ovulatory: 16
+  phase_symptoms:        # symptom -> field and threshold for "present"
+    acne: {field: acne, min: 2}
+    pain: {field: pain_level, min: 4}
+    bloating: {field: bloating, min: 1}
+    headache: {field: headache, min: 1}
+    low_mood: {field: mood, max: 2}
+    fatigue: {field: fatigue, min: 4}

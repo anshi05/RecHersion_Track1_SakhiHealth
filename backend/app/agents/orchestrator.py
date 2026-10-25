@@ -1,6 +1,8 @@
 """Orchestrator: urgent check first, then route to the agents whose `applies()` is true."""
 from app.agents.registry import AGENTS
 from app.schemas import AgentResult, RoutingDecision, Skipped, Summary, UserContext
+from app.services.llm import generate, questions_valid, split_questions
+from app.services.prompts import facts_for, questions_template, summary_template
 from app.services.rules import evaluate
 
 
@@ -33,5 +35,15 @@ def route(ctx: UserContext) -> RoutingDecision:
 def orchestrate(ctx: UserContext) -> tuple[RoutingDecision, list[AgentResult], Summary]:
     routing = route(ctx)
     results = [AGENTS[n].run(ctx) for n in routing.activated]
-    text = " ".join(r.headline for r in results)  # template summary until the LLM layer (P7)
-    return routing, results, Summary(text=text, source="template")
+    # Urgent bypasses the LLM: template text only, instant.
+    use_llm = not routing.urgent
+    uid, facts = ctx.profile.id, facts_for(results, ctx.age, ctx.profile.life_stage)
+    text, source = generate("summary", facts, ctx.lang, summary_template(results), uid, allow_llm=use_llm)
+    qs, qs_source = generate(
+        "questions", facts, ctx.lang, "\n".join(questions_template(results)), uid,
+        valid=questions_valid, allow_llm=use_llm,
+    )
+    if qs_source == "llm":
+        lead = results[0]  # Health Story always runs first and carries the doctor questions
+        lead.questions_for_doctor, lead.text_source = split_questions(qs), "llm"
+    return routing, results, Summary(text=text, source=source)

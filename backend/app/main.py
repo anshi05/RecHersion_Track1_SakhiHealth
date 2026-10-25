@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlmodel import SQLModel
 
-from app.api import analyze, logs, measurements, personas, profile, timeline
+from app.api import analyze, explain, logs, measurements, personas, profile, timeline
 from app.config import get_settings
 from app.db import engine
 from app.errors import AppError
@@ -44,6 +44,7 @@ def health() -> dict[str, str]:
 
 
 for _r in (
-    analyze.router, personas.router, profile.router, logs.router, measurements.router, timeline.router
+    analyze.router, personas.router, profile.router, logs.router, measurements.router,
+    timeline.router, explain.router,
 ):
     app.include_router(_r)

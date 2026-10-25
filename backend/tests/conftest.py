@@ -28,6 +28,12 @@ def load_ctx(key: str) -> UserContext:
     )
 
 
+@pytest.fixture(autouse=True)
+def no_live_llm(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Tests never hit the network: force template mode unless a test installs its own settings."""
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "")
+
+
 @pytest.fixture(scope="session")
 def personas() -> dict[str, UserContext]:
     return {k: load_ctx(k) for k in ("priya", "meena", "sunita")}

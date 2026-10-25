@@ -34,3 +34,29 @@ export function correlationText(key: string, r: number): string {
       return key;
   }
 }
+
+export const AGENT_LABEL: Record<string, string> = {
+  health_story: "Health Story", pcos_endo: "PCOS & Endometriosis",
+  menopause: "Menopause", maternal: "Maternal health",
+};
+
+/** Agent-id → CSS color token (guide §8.1). */
+export const AGENT_COLOR: Record<string, string> = {
+  health_story: "var(--agent-health-story)", pcos_endo: "var(--agent-pcos-endo)",
+  menopause: "var(--agent-menopause)", maternal: "var(--agent-maternal)",
+};
+
+export const BAND_LABEL: Record<string, string> = { low: "Low", moderate: "Moderate", high: "High" };
+
+export const RULE_LABEL: Record<string, string> = {
+  cycle_long: "Long cycles", cycle_variability: "Variable cycle length",
+  hirsutism_persistent: "Persistent unwanted hair growth", acne_persistent: "Persistent acne",
+  pco_ultrasound: "Ultrasound finding", family_history_pcos: "Family history",
+  bmi_elevated: "Body mass index", severe_period_pain: "Severe period pain",
+  pain_interferes: "Pain interfering with daily life",
+  dyspareunia_or_bowel_urinary: "Pain with intimacy or bowel/urinary symptoms",
+  vasomotor_frequent: "Frequent hot flashes", night_sweats_frequent: "Frequent night sweats",
+  sleep_short: "Short sleep", perimenopause_age_window: "Age window",
+  bp_alert: "Raised blood pressure", anemia_low_hb: "Low haemoglobin",
+  low_fetal_movement: "Fewer baby movements", swelling_with_headache: "Swelling with headache",
+};

@@ -79,3 +79,10 @@ def test_list_and_switch_changes_data(client: TestClient) -> None:
 def test_switch_unknown_persona(client: TestClient) -> None:
     r = client.post("/api/session/switch", json={"persona_key": "nope"})
     assert r.status_code == 404 and r.json()["error"]["code"] == "unknown_persona"
+
+
+def test_analyze_endpoint_stores_run(client: TestClient) -> None:
+    client.post("/api/session/switch", json={"persona_key": "priya"})
+    a = client.post("/api/analyze").json()
+    assert a["routing"]["activated"] == ["health_story", "pcos_endo"]
+    assert a["run_id"] >= 1 and len(a["results"]) == 2

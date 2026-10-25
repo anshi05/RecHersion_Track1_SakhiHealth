@@ -49,7 +49,7 @@ def test_profile_get_put_age(env: tuple[TestClient, Session]) -> None:
 def test_post_log_then_get_and_upsert(env: tuple[TestClient, Session]) -> None:
     c, _ = env
     r = c.post("/api/logs", json={"date": "2026-01-05", "flow": "light", "mood": 3})
-    assert r.status_code == 200 and r.json()["analysis"] is None
+    assert r.status_code == 200 and r.json()["analysis"]["run_id"]
     c.post("/api/logs", json={"date": "2026-01-05", "flow": "heavy", "mood": 4})
     got = c.get("/api/logs", params={"from": "2026-01-01", "to": "2026-01-31"}).json()
     assert len(got) == 1 and got[0]["flow"] == "heavy" and got[0]["mood"] == 4

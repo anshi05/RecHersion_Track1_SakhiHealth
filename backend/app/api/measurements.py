@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
+from app.api.analyze import analyze_user
 from app.api.deps import get_user
 from app.db import get_session
 from app.models.tables import Measurement, User
@@ -19,9 +20,9 @@ def add_measurement(
     session.add(row)
     session.commit()
     session.refresh(row)
-    # analysis is None until the Phase 5 orchestrator is wired in.
     return MeasurementResponse(
-        measurement=MeasurementOut.model_validate(row, from_attributes=True), analysis=None
+        measurement=MeasurementOut.model_validate(row, from_attributes=True),
+        analysis=analyze_user(session, user),
     )
 
 

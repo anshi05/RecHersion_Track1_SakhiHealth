@@ -119,3 +119,9 @@ stats:
     headache: {field: headache, min: 1}
     low_mood: {field: mood, max: 2}
     fatigue: {field: fatigue, min: 4}
+
+# Agent scoring (agents/base.py): score = sum of fired weights / sum of all weights for the agent
+scoring:
+  moderate: 0.34   # low < 0.34 <= moderate < 0.67 <= high
+  high: 0.67
+  source: "Sakhi Health design choice (awareness bands, not clinical cut-offs); TODO(clinician)"

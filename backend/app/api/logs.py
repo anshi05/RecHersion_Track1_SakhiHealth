@@ -3,6 +3,7 @@ from datetime import date
 from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session, select
 
+from app.api.analyze import analyze_user
 from app.api.deps import get_user
 from app.db import get_session
 from app.models.tables import DailyLog, User
@@ -31,8 +32,9 @@ def upsert_log(
     session.commit()
     session.refresh(row)
     recompute_cycles(session, user.id)
-    # analysis is None until the Phase 5 orchestrator is wired in.
-    return LogResponse(log=DailyLogOut.model_validate(row, from_attributes=True), analysis=None)
+    return LogResponse(
+        log=DailyLogOut.model_validate(row, from_attributes=True), analysis=analyze_user(session, user)
+    )
 
 
 @router.get("/logs", response_model=list[DailyLogOut])

@@ -23,3 +23,8 @@ def evidence_from_rules(ctx: UserContext, names: list[str]) -> tuple[list[Eviden
     cfg = load_config()["rules"]
     total = sum(float(cfg[n]["weight"]) for n in names)
     return ev, (sum(e.weight for e in ev) / total if total else 0.0)
+
+
+def band_for(score: float) -> str:
+    cfg = load_config()["scoring"]
+    return "high" if score >= cfg["high"] else "moderate" if score >= cfg["moderate"] else "low"

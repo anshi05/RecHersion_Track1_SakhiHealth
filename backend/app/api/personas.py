@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Depends, Response
 from sqlmodel import Session, select
 
+from app.api.analyze import analyze_user
 from app.api.deps import age_from_dob, get_user
 from app.api.profile import to_profile
 from app.db import get_session
@@ -35,7 +36,7 @@ def switch(
     if user is None or not has_logs:  # first visit, or data was deleted: (re)seed
         user = seed_persona(session, body.persona_key)
     response.set_cookie("uid", str(user.id), httponly=True, samesite="lax", path="/", max_age=86400 * 30)
-    return SwitchResponse(profile=to_profile(user), analysis=None)  # analysis wired in Phase 5
+    return SwitchResponse(profile=to_profile(user), analysis=analyze_user(session, user))
 
 
 @router.get("/session", response_model=SessionResponse)

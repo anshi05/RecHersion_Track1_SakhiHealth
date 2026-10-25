@@ -5,14 +5,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { DashboardStats } from "@/components/dashboard-stats";
+import { RoutingPanel } from "@/components/motion/RoutingPanel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CycleTimeline } from "@/components/viz/CycleTimeline";
 import { Heatmap, type HeatRow } from "@/components/viz/Heatmap";
 import { api } from "@/lib/api";
+import { AGENT_COLOR, AGENT_LABEL, BAND_LABEL } from "@/lib/labels";
 import type { components } from "@/types/openapi";
 
 type Session = components["schemas"]["SessionResponse"];
 type AgentResult = components["schemas"]["AgentResult"];
+type Analysis = components["schemas"]["AnalyzeResponse"];
 type Timeline = components["schemas"]["TimelineResponse"];
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -41,6 +44,7 @@ export default function Hub() {
   const router = useRouter();
   const [s, setS] = useState<Session | null>(null);
   const [story, setStory] = useState<AgentResult | null>(null);
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [timeline, setTimeline] = useState<Timeline | null>(null);
   const [failed, setFailed] = useState(false);
 
@@ -50,6 +54,7 @@ export default function Hub() {
         setS(sess);
         return Promise.all([
           api<AgentResult>("/agents/health_story").then(setStory),
+          api<Analysis>("/analyze", { method: "POST" }).then(setAnalysis),
           api<Timeline>("/timeline?days=365").then(setTimeline),
         ]);
       })
@@ -73,7 +78,7 @@ export default function Hub() {
         <p role="alert" className="rounded-[20px] bg-card p-5 shadow-(--shadow-card)">
           We could not load your health story. Check that the API is running, then reload.
         </p>
-      ) : !story || !timeline ? (
+      ) : !story || !timeline || !analysis ? (
         <HubSkeleton />
       ) : (
         <>
@@ -86,6 +91,30 @@ export default function Hub() {
             <p className="relative text-sm text-muted-foreground">Your health story</p>
             <p className="relative mt-1 max-w-2xl font-heading text-2xl font-semibold leading-snug">{story.headline}</p>
           </section>
+
+          <Section title="How we looked at your data">
+            <RoutingPanel routing={analysis.routing} />
+          </Section>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {analysis.results
+              .filter((a) => a.agent !== "health_story")
+              .map((a) => (
+                <Link
+                  key={a.agent}
+                  href={`/agents/${a.agent}`}
+                  className="block rounded-[20px] border-l-4 bg-card p-5 shadow-(--shadow-card) transition-transform hover:-translate-y-0.5"
+                  style={{ borderLeftColor: AGENT_COLOR[a.agent] }}
+                >
+                  <p className="text-sm text-muted-foreground">
+                    {AGENT_LABEL[a.agent]}
+                    {a.band && <> · {BAND_LABEL[a.band] ?? a.band}</>}
+                  </p>
+                  <p className="mt-1 font-heading text-lg font-semibold leading-snug">{a.headline}</p>
+                  <p className="mt-2 text-sm underline">See the evidence</p>
+                </Link>
+              ))}
+          </div>
 
           <DashboardStats result={story} />
 

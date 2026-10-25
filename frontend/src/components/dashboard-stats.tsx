@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { animate, useReducedMotion } from "motion/react";
 import { CircleAlert, CircleCheck, CircleHelp, TrendingDown, TrendingUp } from "lucide-react";
 
 import { METRIC_LABEL, PHASE_LABEL, SYMPTOM_LABEL, correlationText } from "@/lib/labels";
-import { dur, ease } from "@/lib/motion";
+import { CountUp } from "@/components/motion/CountUp";
 import type { components } from "@/types/openapi";
 
 type AgentResult = components["schemas"]["AgentResult"];
@@ -17,26 +15,6 @@ export type Stats = {
   correlations: { key: string; r: number; n: number }[];
   days_logged: number;
 };
-
-function CountUp({ value, decimals = 0 }: { value: number; decimals?: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const reduce = useReducedMotion();
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (reduce) {
-      el.textContent = value.toFixed(decimals);
-      return;
-    }
-    const c = animate(0, value, {
-      duration: dur.hero,
-      ease: ease.out,
-      onUpdate: (v) => (el.textContent = v.toFixed(decimals)),
-    });
-    return () => c.stop();
-  }, [value, decimals, reduce]);
-  return <span ref={ref} className="tabular-nums">{value.toFixed(decimals)}</span>;
-}
 
 function Tile({ label, children, note }: { label: string; children: React.ReactNode; note?: string }) {
   return (

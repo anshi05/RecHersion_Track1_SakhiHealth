@@ -1,0 +1,40 @@
+{
+  "_note": "Care-navigation content. Awareness only; tests are conversation starters for a doctor, never orders. TODO(clinician): review all text before real use.",
+  "pcos": {
+    "specialist": "Gynaecologist or endocrinologist",
+    "suggested_tests": [
+      "Pelvic ultrasound",
+      "Blood tests for androgen hormones (such as testosterone)",
+      "Thyroid function (TSH) and prolactin",
+      "Fasting glucose or HbA1c"
+    ],
+    "exclusions": "Doctors usually rule out other causes of irregular cycles or excess hair growth first, such as thyroid conditions, raised prolactin and adrenal conditions.",
+    "questions": [
+      "My cycles are often longer than 35 days. Could this fit a pattern worth investigating?",
+      "I have persistent acne and unwanted hair growth. Are hormone tests appropriate for me?",
+      "Which tests would you suggest to rule out other causes before drawing conclusions?"
+    ],
+    "delay": {
+      "title": "Why it is worth raising early",
+      "body": "Surveys of women with PCOS report that many waited over two years and saw several health professionals before getting answers. Bringing a dated log to your visit can shorten that path.",
+      "source": "Gibson-Helm et al., J Clin Endocrinol Metab 2017"
+    }
+  },
+  "endo": {
+    "specialist": "Gynaecologist",
+    "suggested_tests": [
+      "Pelvic examination",
+      "Pelvic ultrasound (transvaginal if appropriate)"
+    ],
+    "exclusions": "Doctors usually also consider other causes of pelvic pain, such as fibroids, adenomyosis, pelvic infection and bowel or bladder conditions.",
+    "questions": [
+      "My period pain is severe and limits my day. Could this fit a pattern worth investigating?",
+      "Pain with intimacy or bowel or urinary symptoms around my period: should these be examined?"
+    ],
+    "delay": {
+      "title": "Severe period pain is not something to just put up with",
+      "body": "Endometriosis is commonly reported to take several years from first symptoms to answers. A log of pain days and how they affect daily life helps your doctor take it seriously.",
+      "source": "Nnoaham et al., Fertil Steril 2011; ESHRE endometriosis guideline 2022"
+    }
+  }
+}

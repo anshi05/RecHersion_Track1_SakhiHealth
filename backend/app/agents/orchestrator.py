@@ -3,7 +3,7 @@ from app.agents.registry import AGENTS
 from app.schemas import AgentResult, RoutingDecision, Skipped, Summary, UserContext
 from app.services.llm import generate, questions_valid, split_questions
 from app.services.prompts import facts_for, questions_template, summary_template
-from app.services.rules import evaluate
+from app.services.rules import evaluate, load_config
 
 
 def urgent_check(ctx: UserContext) -> list[str]:
@@ -11,8 +11,13 @@ def urgent_check(ctx: UserContext) -> list[str]:
     bp = evaluate("bp_urgent", ctx)
     if bp.fired:
         reasons.append(bp.evidence)
+    hb = evaluate("anemia_severe", ctx)
+    if hb.fired:
+        reasons.append(hb.evidence)
     if ctx.logs and ctx.logs[-1].danger_signs:
-        reasons.append("Danger signs logged: " + ", ".join(ctx.logs[-1].danger_signs))
+        labels = load_config()["danger_signs"]["items"]
+        names = ", ".join(labels.get(d, d) for d in ctx.logs[-1].danger_signs)
+        reasons.append(f"Danger signs logged: {names}")
     return reasons
 
 

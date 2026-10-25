@@ -58,5 +58,6 @@ export const RULE_LABEL: Record<string, string> = {
   vasomotor_frequent: "Frequent hot flashes", night_sweats_frequent: "Frequent night sweats",
   sleep_short: "Short sleep", perimenopause_age_window: "Age window",
   bp_alert: "Raised blood pressure", anemia_low_hb: "Low haemoglobin",
-  low_fetal_movement: "Fewer baby movements", swelling_with_headache: "Swelling with headache",
+  low_fetal_movement: "Fewer baby movements", anemia_severe: "Very low haemoglobin",
+  rapid_weight_gain: "Rapid weight gain", anc_missed: "Antenatal visits behind schedule", swelling_with_headache: "Swelling with headache",
 };

@@ -232,3 +232,41 @@ def swelling_with_headache(ctx: UserContext, cfg: dict[str, Any]) -> RuleResult:
     return _res(cfg, ctx.profile.is_pregnant and n >= cfg["min_days"],
                 f"Swelling and headache both rated {cfg['min_level']}+ on {n} of the last "
                 f"{cfg['window_days']} days.")
+
+
+@rule("anemia_severe")
+def anemia_severe(ctx: UserContext, cfg: dict[str, Any]) -> RuleResult:
+    m = latest(ctx, "hemoglobin")
+    if m is None or not ctx.profile.is_pregnant:
+        return _res(cfg, False, "No haemoglobin recorded.")
+    return _res(cfg, m.value_1 < cfg["max_hb"], f"Latest haemoglobin {m.value_1:.1f} g/dL on {m.date}.")
+
+
+@rule("rapid_weight_gain")
+def rapid_weight_gain(ctx: UserContext, cfg: dict[str, Any]) -> RuleResult:
+    ms = sorted((m for m in ctx.measurements if m.type == "weight"), key=lambda m: m.date)
+    if len(ms) < 2:
+        return _res(cfg, False, "Not enough weight readings recorded.")
+    last = ms[-1]
+    first = next((m for m in ms if (last.date - m.date).days <= cfg["window_days"]), ms[-2])
+    days = (last.date - first.date).days
+    if days < 7:
+        return _res(cfg, False, "Weight readings are too close together to compare.")
+    rate = (last.value_1 - first.value_1) / days * 7
+    return _res(cfg, ctx.profile.is_pregnant and rate > cfg["max_kg_per_week"],
+                f"Weight changed {rate:+.1f} kg per week over the last {days} days.")
+
+
+def anc_progress(ctx: UserContext, cfg: dict[str, Any]) -> tuple[int, int]:
+    """(contacts due by the current gestational week, visits recorded)."""
+    wk = ctx.gestational_week or 0
+    due = sum(1 for w in cfg["schedule_weeks"] if w <= wk)
+    return due, sum(1 for m in ctx.measurements if m.type == "anc_visit")
+
+
+@rule("anc_missed")
+def anc_missed(ctx: UserContext, cfg: dict[str, Any]) -> RuleResult:
+    due, done = anc_progress(ctx, cfg)
+    return _res(cfg, ctx.profile.is_pregnant and done < due,
+                f"{done} antenatal visits recorded; about {due} are usually due by week "
+                f"{ctx.gestational_week}.")

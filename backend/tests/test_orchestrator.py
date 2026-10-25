@@ -59,3 +59,37 @@ def test_pcos_low_band_has_no_navigation(personas: dict[str, UserContext]) -> No
     assert r.band == "low" and r.specialist is None and r.questions_for_doctor == []
     assert any(c.key == "exclusions" for c in r.cards)
 
+
+
+def _with(ctx: UserContext, **kw: object) -> UserContext:
+    return UserContext(**{**ctx.__dict__, **kw})
+
+
+def test_sunita_hypertension_flag_not_urgent(personas: dict[str, UserContext]) -> None:
+    from app.agents.maternal import Maternal
+
+    r = Maternal().run(personas["sunita"])
+    assert r.status == "flag" and any(e.rule == "bp_alert" for e in r.evidence)
+    assert {c.id for c in r.charts} >= {"gestation", "bp_trend", "hb_trend"}
+    assert r.stats["anc"] and r.specialist
+
+
+def test_danger_sign_triggers_urgent_without_llm(personas: dict[str, UserContext]) -> None:
+    from app.agents.maternal import Maternal
+
+    ctx = personas["sunita"]
+    last = ctx.logs[-1].model_copy(update={"danger_signs": ["convulsions"]})
+    urgent = _with(ctx, logs=[*ctx.logs[:-1], last])
+    routing, results, summary = orchestrate(urgent)
+    assert routing.urgent and "Convulsions" in routing.urgent_reasons[0]
+    assert summary.source == "template"
+    m = next(r for r in results if r.agent == "maternal")
+    assert m.status == "urgent" and m.disclaimer_key == "emergency" and "108" in m.headline
+    assert Maternal().run(urgent).status == "urgent"
+
+
+def test_severe_anemia_is_urgent(personas: dict[str, UserContext]) -> None:
+    ctx = personas["sunita"]
+    hb = next(m for m in ctx.measurements if m.type == "hemoglobin").model_copy(
+        update={"value_1": 6.5, "date": ctx.measurements[-1].date + timedelta(days=1)})
+    assert route(_with(ctx, measurements=[*ctx.measurements, hb])).urgent

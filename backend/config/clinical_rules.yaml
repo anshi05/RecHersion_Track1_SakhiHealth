@@ -88,6 +88,19 @@ rules:
     weight: 0.5
     max_hb: 11.0         # g/dL, pregnancy
     source: "WHO 2011: haemoglobin < 11 g/dL in pregnancy"
+  anemia_severe:
+    weight: 1.0
+    max_hb: 7.0          # g/dL
+    source: "WHO 2011: haemoglobin < 7 g/dL is severe anaemia in pregnancy"
+  rapid_weight_gain:
+    weight: 0.4
+    window_days: 28
+    max_kg_per_week: 1.0  # TODO(clinician): confirm cut-off, depends on pre-pregnancy BMI
+    source: "ACOG Practice Bulletin 222 (2020): sudden rapid weight gain as a pre-eclampsia warning sign"
+  anc_missed:
+    weight: 0.4
+    schedule_weeks: [12, 20, 26, 30, 34, 36, 38, 40]  # WHO 8-contact model
+    source: "WHO 2016 ANC recommendations: eight contacts"
   low_fetal_movement:
     weight: 0.8
     recent_counts: 3
@@ -99,6 +112,21 @@ rules:
     min_level: 2
     min_days: 2
     source: "ACOG Practice Bulletin 222 (2020): headache with swelling as pre-eclampsia warning signs"
+
+# Danger signs that trigger the urgent state for any pregnancy log (id -> label)
+danger_signs:
+  source: "Brief 10.4 / WHO 2016 ANC danger signs; TODO(clinician)"
+  items:
+    severe_headache: "Severe headache"
+    blurred_vision: "Blurred vision or flashing lights"
+    convulsions: "Convulsions or fits"
+    heavy_bleeding: "Heavy vaginal bleeding"
+    leaking_fluid: "Leaking fluid"
+    severe_abdominal_pain: "Severe abdominal pain"
+    reduced_fetal_movement: "Reduced or absent baby movement"
+    high_fever: "High fever"
+    face_hand_swelling: "Swelling of face or hands with headache"
+    difficulty_breathing: "Difficulty breathing"
 
 # Health Story statistics (services/stats.py)
 stats:

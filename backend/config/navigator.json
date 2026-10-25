@@ -36,5 +36,21 @@
       "body": "Endometriosis is commonly reported to take several years from first symptoms to answers. A log of pain days and how they affect daily life helps your doctor take it seriously.",
       "source": "Nnoaham et al., Fertil Steril 2011; ESHRE endometriosis guideline 2022"
     }
+  },
+  "maternal": {
+    "specialist": "Obstetrician or your antenatal (ANC) clinic",
+    "suggested_tests": [
+      "Repeat blood pressure check",
+      "Urine protein test",
+      "Haemoglobin / complete blood count",
+      "Ultrasound growth scan if advised"
+    ],
+    "questions": [
+      "My blood pressure readings have been rising. Should I be checked sooner than my next visit?",
+      "My haemoglobin has been low. Would iron or diet changes be worth discussing with you?",
+      "Which warning signs should make me come in right away or call for help?"
+    ],
+    "exclusions": "A doctor or midwife looks at blood pressure, urine protein, swelling and your symptoms together, and may also rule out other causes of headache or tiredness.",
+    "when_to_call": "Call 108 (ambulance) or 112 right away for severe headache, blurred vision, fits, heavy bleeding, leaking fluid, severe belly pain, much less baby movement, high fever or trouble breathing."
   }
 }

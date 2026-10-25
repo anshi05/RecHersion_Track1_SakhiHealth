@@ -50,6 +50,20 @@ def with_age(a: int) -> Mut:
     return lambda c: replace(c, age=a)
 
 
+def weight_gain(kg: float) -> Mut:
+    def f(c: UserContext) -> UserContext:
+        keep = [m for m in c.measurements if m.type != "weight"]
+        w = [Measurement(id=900 + i, user_id=0, date=date(2099, 1, 1 + 14 * i), type="weight",
+                         value_1=60 + kg * i, unit="kg") for i in range(2)]
+        return replace(c, measurements=[*keep, *w])
+
+    return f
+
+
+def no_anc(c: UserContext) -> UserContext:
+    return replace(c, measurements=[m for m in c.measurements if m.type != "anc_visit"])
+
+
 # rule -> (fire: (persona, mutation), no-fire: (persona, mutation))
 CASES: dict[str, tuple[tuple[str, Mut], tuple[str, Mut]]] = {
     "cycle_long": (("priya", same), ("sunita", same)),
@@ -69,6 +83,9 @@ CASES: dict[str, tuple[tuple[str, Mut], tuple[str, Mut]]] = {
     "bp_alert": (("sunita", same), ("meena", same)),
     "bp_urgent": (("sunita", add_meas("bp", 162, 112)), ("sunita", same)),
     "anemia_low_hb": (("sunita", same), ("sunita", add_meas("hemoglobin", 12.5))),
+    "anemia_severe": (("sunita", add_meas("hemoglobin", 6.5)), ("sunita", same)),
+    "rapid_weight_gain": (("sunita", weight_gain(4)), ("sunita", weight_gain(0.5))),
+    "anc_missed": (("sunita", no_anc), ("sunita", same)),
     "low_fetal_movement": (("sunita", add_meas("fetal_movement_count", 5, n=3)), ("sunita", same)),
     "swelling_with_headache": (("sunita", same), ("priya", pregnant)),
 }

@@ -126,6 +126,10 @@ export default function Hub() {
             <CycleTimeline days={timeline.days} cycles={timeline.cycles} />
           </Section>
 
+          <Link href="/report" className="inline-flex min-h-11 items-center text-sm font-medium underline">
+            Create a doctor-ready PDF report
+          </Link>
+
           <p className="text-xs text-muted-foreground">
             Awareness only. This is not a diagnosis. Consider discussing these patterns with a doctor.
           </p>
